@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Risk Register · {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h2>📊 Risk Register</h2>
+</div>
+<div class="page-content">
+  <div class="card">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Risk ID</th>
+            <th>Asset</th>
+            <th>Threat</th>
+            <th>STRIDE</th>
+            <th>NIST CSF</th>
+            <th>Likelihood</th>
+            <th>Impact</th>
+            <th>Score</th>
+            <th>Treatment</th>
+          </tr>
+        </thead>
+        <tbody id="risk-tbody">
+          <tr><td colspan="9" class="text-center"><span class="spinner"></span> Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>loadRiskRegister();</script>
+{% endblock %}

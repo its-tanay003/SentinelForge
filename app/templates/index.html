@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Overview · {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h2>🏠 Overview Dashboard</h2>
+  <div class="topbar-actions">
+    <a href="/scan" class="btn btn-primary btn-sm">+ New Scan</a>
+  </div>
+</div>
+<div class="page-content">
+
+  <!-- KPI Cards -->
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-title">Total Scans</div>
+      <div class="card-value" id="total-scans">—</div>
+      <div class="card-sub">All time</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Total Findings</div>
+      <div class="card-value" id="total-findings">—</div>
+      <div class="card-sub">Across all scans</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Critical Findings</div>
+      <div class="card-value text-critical" id="critical-count">—</div>
+      <div class="card-sub">Require immediate action</div>
+    </div>
+    <div class="card">
+      <div class="card-title">SOAR Incidents</div>
+      <div class="card-value text-high" id="total-incidents">—</div>
+      <div class="card-sub">Playbooks triggered</div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title">Findings by Severity</div>
+      <div class="chart-container">
+        <canvas id="chart-severity"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Risk Score Trend</div>
+      <div class="chart-container">
+        <canvas id="chart-trend"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title">STRIDE Threat Categories</div>
+      <div class="chart-container">
+        <canvas id="chart-stride"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">NIST CSF 2.0 Coverage</div>
+      <div class="chart-container">
+        <canvas id="chart-nist"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Scans -->
+  <div class="card">
+    <div class="section-title">Recent Scans</div>
+    {% if recent_scans %}
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Target</th><th>Status</th><th>Risk Score</th><th>Findings</th><th>Date</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in recent_scans %}
+          <tr>
+            <td class="mono">{{ item.scan.id }}</td>
+            <td><span class="truncate">{{ item.scan.target_url }}</span></td>
+            <td>
+              <span class="status-dot status-{{ item.scan.status }}"></span>
+              {{ item.scan.status }}
+            </td>
+            <td>
+              <strong class="text-{% if item.scan.risk_score >= 80 %}critical{% elif item.scan.risk_score >= 60 %}high{% elif item.scan.risk_score >= 40 %}medium{% else %}low{% endif %}">
+                {{ "%.1f"|format(item.scan.risk_score) }}/100
+              </strong>
+            </td>
+            <td>{{ item.finding_count }}</td>
+            <td class="text-muted">{{ item.scan.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>
+              <a href="/findings-ui?scan_id={{ item.scan.id }}" class="btn btn-sm btn-secondary">Findings</a>
+              {% if item.scan.status == 'completed' %}
+              <a href="/report/{{ item.scan.id }}" target="_blank" class="btn btn-sm btn-secondary">Report</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+      No scans yet. <a href="/scan" style="color:inherit;font-weight:bold">Run your first scan</a> against the demo target at <code>{{ demo_target }}</code>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>loadOverview();</script>
+{% endblock %}

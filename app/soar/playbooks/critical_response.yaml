@@ -1,0 +1,30 @@
+name: critical-finding-response
+description: >
+  Trigger when any Critical severity findings are detected.
+  Creates a ticket and sends notifications.
+version: "1.0"
+
+trigger:
+  logic: OR
+  conditions:
+    - field: critical_count
+      operator: gt
+      value: 0
+    - field: max_severity
+      operator: eq
+      value: "Critical"
+
+actions:
+  - action: create_ticket
+    params:
+      finding_ids: $finding_ids
+      severity: "Critical"
+  - action: notify
+    params:
+      message: "CRITICAL findings detected! Immediate remediation required. Scan ID: $scan_id, Target: $target_url"
+      channels:
+        - console
+        - email
+        - webhook
+  - action: generate_report
+    params: {}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}SOAR Incidents · {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h2>⚡ SOAR Incidents</h2>
+</div>
+<div class="page-content">
+  <div class="alert alert-info">
+    ℹ️ All SOAR actions are <strong>simulated</strong> — no real systems are modified.
+    Actions are logged to the incident log and displayed here for educational purposes.
+  </div>
+  <div id="incidents-container">
+    <div class="text-center"><span class="spinner"></span> Loading incidents…</div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>loadIncidents();</script>
+{% endblock %}

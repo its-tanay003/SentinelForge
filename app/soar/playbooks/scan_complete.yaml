@@ -1,0 +1,22 @@
+name: scan-complete-summary
+description: >
+  Always trigger at scan completion to send a summary notification
+  regardless of finding severity.
+version: "1.0"
+
+trigger:
+  logic: AND
+  conditions:
+    - field: total_findings
+      operator: gte
+      value: 0
+
+actions:
+  - action: notify
+    params:
+      message: >
+        Scan complete for $target_url. Findings: $total_findings
+        (Critical: $critical_count, High: $high_count, Medium: $medium_count).
+        Risk Score: $risk_score. Review the dashboard for full details.
+      channels:
+        - console

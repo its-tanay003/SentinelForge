@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}{{ app_name }}{% endblock %}</title>
+<link rel="stylesheet" href="/static/css/app.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">SF</div>
+    <div>
+      <h1>{{ app_name }}</h1>
+      <small>Security Platform</small>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a href="/" class="nav-item {% if request.url.path == '/' %}active{% endif %}">
+      <span class="nav-icon">🏠</span> Overview
+    </a>
+    <a href="/scan" class="nav-item {% if request.url.path == '/scan' %}active{% endif %}">
+      <span class="nav-icon">🔍</span> New Scan
+    </a>
+    <div class="nav-section-label" style="margin-top:12px">Analysis</div>
+    <a href="/findings-ui" class="nav-item {% if 'findings' in request.url.path %}active{% endif %}">
+      <span class="nav-icon">🐛</span> Findings
+    </a>
+    <a href="/intel-ui" class="nav-item {% if 'intel' in request.url.path %}active{% endif %}">
+      <span class="nav-icon">🌐</span> Threat Intel
+    </a>
+    <a href="/risk-ui" class="nav-item {% if 'risk' in request.url.path %}active{% endif %}">
+      <span class="nav-icon">📊</span> Risk Register
+    </a>
+    <a href="/soar-ui" class="nav-item {% if 'soar' in request.url.path %}active{% endif %}">
+      <span class="nav-icon">⚡</span> SOAR Incidents
+    </a>
+    <div class="nav-section-label" style="margin-top:12px">API</div>
+    <a href="/api/docs" class="nav-item" target="_blank">
+      <span class="nav-icon">📖</span> API Docs
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    v1.0.0 · For Authorized Testing Only
+  </div>
+</nav>
+
+<!-- Main content -->
+<div class="main-content">
+  <!-- Ethical notice banner -->
+  <div style="background:rgba(210,153,34,0.1);border-bottom:1px solid rgba(210,153,34,0.3);padding:6px 24px;font-size:12px;color:#d29922;display:flex;align-items:center;gap:8px;">
+    ⚠️ <strong>ETHICAL NOTICE:</strong> SentinelForge is for authorized security testing ONLY. Only scan systems you own or have explicit written permission to test. Unauthorized scanning is illegal.
+  </div>
+
+  {% block content %}{% endblock %}
+</div>
+
+<!-- Finding Detail Modal -->
+<div id="finding-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;width:100%;max-width:700px;max-height:85vh;overflow-y:auto;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;">
+      <h3 id="modal-title" style="font-size:14px;color:var(--accent-blue)"></h3>
+      <button id="modal-close" class="btn btn-sm btn-secondary">✕</button>
+    </div>
+    <div id="modal-body" style="padding:20px;"></div>
+  </div>
+</div>
+
+<script src="/static/js/app.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

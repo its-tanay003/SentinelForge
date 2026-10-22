@@ -1,0 +1,33 @@
+name: high-severity-with-threat-intel
+description: >
+  Trigger when High/Critical findings are present AND threat intel
+  shows malicious activity for the target domain.
+version: "1.0"
+
+trigger:
+  logic: AND
+  conditions:
+    - field: intel_malicious_count
+      operator: gt
+      value: 0
+    - field: high_count
+      operator: gte
+      value: 1
+
+actions:
+  - action: simulate_block_ip
+    params:
+      target: $target_url
+      reason: "High severity findings combined with positive threat intel"
+  - action: create_ticket
+    params:
+      finding_ids: $finding_ids
+      severity: "High"
+  - action: notify
+    params:
+      message: >
+        THREAT INTEL ALERT: Target has known malicious activity (malicious_count=$intel_malicious_count)
+        AND High severity findings. Potential active threat. Scan: $scan_id
+      channels:
+        - console
+        - email

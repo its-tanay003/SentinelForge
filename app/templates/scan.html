@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}New Scan · {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h2>🔍 New Security Scan</h2>
+</div>
+<div class="page-content">
+
+  <div class="alert alert-warning">
+    ⚠️ <strong>ETHICAL NOTICE:</strong> Only scan systems you own or have explicit written permission to test.
+    Unauthorized scanning is illegal and unethical. The default target below is a local intentionally vulnerable
+    demo application designed for this purpose.
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 class="section-title">Scan Configuration</h3>
+      <form id="scan-form">
+        <div class="form-group">
+          <label class="form-label" for="target-url">Target URL *</label>
+          <input type="url" id="target-url" class="form-input" placeholder="http://localhost:9000"
+            value="{{ demo_target }}" required>
+          <small class="text-muted">Default: Demo vulnerable app. Must be a URL you are authorized to test.</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="api-pattern">API Pattern (BOLA/IDOR Check)</label>
+          <input type="text" id="api-pattern" class="form-input" placeholder="/api/users/{id}"
+            value="/api/users/{id}">
+          <small class="text-muted">Pattern with {id} placeholder for BOLA/IDOR testing</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sample-ids">Sample Object IDs (comma-separated)</label>
+          <input type="text" id="sample-ids" class="form-input" placeholder="1, 2, 3" value="1, 2, 3">
+          <small class="text-muted">IDs to test for unauthorized access</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%">
+          🔍 Start Scan
+        </button>
+      </form>
+
+      <div id="scan-result" style="margin-top: 16px;"></div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h3 class="section-title">What Gets Scanned</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="display:flex;gap:10px;align-items:flex-start;">
+            <span>🛡️</span>
+            <div>
+              <strong>Security Headers</strong>
+              <p class="text-muted" style="font-size:12px">CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy</p>
+            </div>
+          </li>
+          <li style="display:flex;gap:10px;align-items:flex-start;">
+            <span>🌍</span>
+            <div>
+              <strong>CORS Misconfiguration</strong>
+              <p class="text-muted" style="font-size:12px">Wildcard origins, reflected origins, credentials with wildcard</p>
+            </div>
+          </li>
+          <li style="display:flex;gap:10px;align-items:flex-start;">
+            <span>🍪</span>
+            <div>
+              <strong>Cookie Security</strong>
+              <p class="text-muted" style="font-size:12px">Secure, HttpOnly, SameSite flags</p>
+            </div>
+          </li>
+          <li style="display:flex;gap:10px;align-items:flex-start;">
+            <span>🔒</span>
+            <div>
+              <strong>TLS/HTTPS</strong>
+              <p class="text-muted" style="font-size:12px">HTTPS enforcement, cert expiry, HSTS configuration</p>
+            </div>
+          </li>
+          <li style="display:flex;gap:10px;align-items:flex-start;">
+            <span>🔑</span>
+            <div>
+              <strong>BOLA/IDOR Detection</strong>
+              <p class="text-muted" style="font-size:12px">Broken Object Level Authorization / Insecure Direct Object References</p>
+            </div>
+          </li>
+          <li style="display:flex;gap:10px;align-items:flex-start;">
+            <span>🌐</span>
+            <div>
+              <strong>Threat Intelligence</strong>
+              <p class="text-muted" style="font-size:12px">Domain/IP reputation via VirusTotal + AlienVault OTX</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">Demo Targets</h3>
+        <p class="text-muted" style="font-size:12px;margin-bottom:10px">Vulnerable and hardened versions for comparison:</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <button class="btn btn-sm btn-secondary" onclick="document.getElementById('target-url').value='http://localhost:9000'">
+              🔴 Vulnerable (port 9000)
+            </button>
+            <span class="text-muted" style="font-size:12px;margin-left:8px">All security controls missing</span>
+          </div>
+          <div>
+            <button class="btn btn-sm btn-secondary" onclick="document.getElementById('target-url').value='http://localhost:9001'">
+              🟢 Hardened (port 9001)
+            </button>
+            <span class="text-muted" style="font-size:12px;margin-left:8px">Security best practices applied</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>initScanForm();</script>
+{% endblock %}

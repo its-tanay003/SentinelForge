@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Findings · {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h2>🐛 Security Findings</h2>
+  <div class="topbar-actions">
+    <select id="scan-filter" class="form-select" style="width:200px" onchange="filterFindings()">
+      <option value="">All Scans</option>
+      {% for scan in scans %}
+      <option value="{{ scan.id }}" {% if request.query_params.get('scan_id') == scan.id|string %}selected{% endif %}>
+        #{{ scan.id }} - {{ scan.target_url[:30] }}...
+      </option>
+      {% endfor %}
+    </select>
+    <select id="severity-filter" class="form-select" style="width:130px" onchange="filterFindings()">
+      <option value="">All Severities</option>
+      <option value="Critical">Critical</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+      <option value="Info">Info</option>
+    </select>
+  </div>
+</div>
+<div class="page-content">
+  <div class="card">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Severity</th>
+            <th>STRIDE</th>
+            <th>NIST CSF</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="findings-tbody">
+          <tr><td colspan="7" class="text-center"><span class="spinner"></span> Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const initScanId = urlParams.get('scan_id');
+  if (initScanId) {
+    document.getElementById('scan-filter').value = initScanId;
+  }
+
+  function filterFindings() {
+    const scanId = document.getElementById('scan-filter').value;
+    const severity = document.getElementById('severity-filter').value;
+    let url = '/findings';
+    const params = [];
+    if (scanId) params.push(`scan_id=${scanId}`);
+    if (severity) params.push(`severity=${severity}`);
+    if (params.length) url += '?' + params.join('&');
+
+    fetch(url)
+      .then(r => r.json())
+      .then(findings => {
+        const tbody = document.getElementById('findings-tbody');
+        if (!findings.length) {
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No findings match the filter.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = findings.map(f => `
+          <tr>
+            <td class="mono">${f.finding_id}</td>
+            <td>${truncate(f.title, 50)}</td>
+            <td><span class="badge" style="background:rgba(88,166,255,0.1);color:#58a6ff;border-color:rgba(88,166,255,0.3)">${f.category}</span></td>
+            <td>${severityBadge(f.severity)}</td>
+            <td><small>${f.stride_category || '-'}</small></td>
+            <td><small>${f.nist_function || '-'}</small></td>
+            <td><button class="btn btn-sm btn-secondary" onclick='showFindingDetail(${JSON.stringify(f)})'>Details</button></td>
+          </tr>`).join('');
+      });
+  }
+
+  filterFindings();
+</script>
+{% endblock %}
