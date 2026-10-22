@@ -9,14 +9,15 @@ def make_cookie_response(set_cookie_values: list[str]):
     """Create a mock response with the given Set-Cookie headers."""
     mock_resp = MagicMock()
     mock_resp.status_code = 200
-    
+
     # Build raw headers with multiple Set-Cookie
-    raw = []
+    # httpx.Headers accepts a sequence of (bytes, bytes) tuples as first positional arg
+    raw: list[tuple[bytes, bytes]] = []
     for v in set_cookie_values:
         raw.append((b"set-cookie", v.encode()))
     raw.append((b"content-type", b"text/html"))
-    
-    mock_resp.headers = httpx.Headers(raw_items=raw)
+
+    mock_resp.headers = httpx.Headers(raw)
     return mock_resp
 
 
