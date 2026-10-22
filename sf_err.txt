@@ -1,0 +1,6 @@
+INFO:     Started server process [73464]
+INFO:     Waiting for application startup.
+2026-10-22 09:21:50,015 [INFO] sentinelforge: SentinelForge 1.0.0 started.
+2026-10-22 09:21:50,016 [INFO] sentinelforge: ⚠️  ETHICAL NOTICE: Only scan systems you own or are authorized to test.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8500 (Press CTRL+C to quit)
